@@ -34,6 +34,8 @@ namespace CPUSimulator
     public partial class Form1 : Form
     {
         String outAsBinary = "";
+        Double clock = 0;
+        Double inst = 0;
         String outAsBinaryNum = "";
         Boolean check = true;
         int[] reg = new int[10];
@@ -62,9 +64,9 @@ namespace CPUSimulator
 
                 if ( int.TryParse( s[2], out number )) //Add A 3
                 {
-                    outAsBinary = "0010";
+                    outAsBinary = "0011";
                     MethodForInt( method, Regis1, number );
-                    NumToBi(number);
+                    //NumToBi(number);
                 }
                 else // Mov A B
                 {
@@ -80,7 +82,7 @@ namespace CPUSimulator
                 String Regis1 = s[1].ToLower();
 
                 if( method.Equals( "del" )){
-                    outAsBinary = "0011";
+                    outAsBinary = "0111";
                     MethodForFunc( method, Regis1 );
                 }
             }
@@ -181,6 +183,8 @@ namespace CPUSimulator
                 move(NumOfReg, number);
                 outputAsBinary(RegisToBiShow(Regis1));
                 outputAsBinary("0000");
+                clock += 1;
+                inst += 1;
             }
             else if (method.Equals("add"))
             {
@@ -188,6 +192,8 @@ namespace CPUSimulator
                 add(NumOfReg, number);
                 outputAsBinary(RegisToBiShow(Regis1));
                 outputAsBinary("0000");
+                clock += 2;
+                inst += 1;
             }
             else if (method.Equals("sub"))
             {
@@ -195,6 +201,8 @@ namespace CPUSimulator
                 sub(NumOfReg, number);
                 outputAsBinary(RegisToBiShow(Regis1));
                 outputAsBinary("0000");
+                clock += 1;
+                inst += 1;
             }
             else if (method.Equals("mul"))
             {
@@ -202,6 +210,8 @@ namespace CPUSimulator
                 mul(NumOfReg, number);
                 outputAsBinary(RegisToBiShow(Regis1));
                 outputAsBinary("0000");
+                clock += 3;
+                inst += 1;
             }
             else if (method.Equals("div"))
             {
@@ -209,6 +219,8 @@ namespace CPUSimulator
                 div(NumOfReg, number);
                 outputAsBinary(RegisToBiShow(Regis1));
                 outputAsBinary("0000");
+                clock += 3;
+                inst += 1;
             }
             else
             {
@@ -226,6 +238,8 @@ namespace CPUSimulator
                 moveReg(NumRegis1, NumRegis2);
                 outputAsBinary(RegisToBiShow(Regis1));
                 outputAsBinary(RegisToBiShow(Regis2));
+                clock += 1;
+                inst += 1;
             }
             else if (method.Equals("add"))
             {
@@ -233,6 +247,8 @@ namespace CPUSimulator
                 addReg(NumRegis1, NumRegis2);
                 outputAsBinary(RegisToBiShow(Regis1));
                 outputAsBinary(RegisToBiShow(Regis2));
+                clock += 2;
+                inst += 1;
             }
             else if (method.Equals("sub"))
             {
@@ -240,6 +256,8 @@ namespace CPUSimulator
                 subReg(NumRegis1, NumRegis2);
                 outputAsBinary(RegisToBiShow(Regis1));
                 outputAsBinary(RegisToBiShow(Regis2));
+                clock += 1;
+                inst += 1;
             }
             else if (method.Equals("mul"))
             {
@@ -247,6 +265,8 @@ namespace CPUSimulator
                 mulReg(NumRegis1, NumRegis2);
                 outputAsBinary(RegisToBiShow(Regis1));
                 outputAsBinary(RegisToBiShow(Regis2));
+                clock += 3;
+                inst += 1;
             }
             else if (method.Equals("div"))
             {
@@ -254,6 +274,8 @@ namespace CPUSimulator
                 divReg(NumRegis1, NumRegis2);
                 outputAsBinary(RegisToBiShow(Regis1));
                 outputAsBinary(RegisToBiShow(Regis2));
+                clock += 3;
+                inst += 1;
             }
             else if (method.Equals("cop"))
             {
@@ -261,6 +283,8 @@ namespace CPUSimulator
                 copyReg(NumRegis1, NumRegis2);
                 outputAsBinary(RegisToBiShow(Regis1));
                 outputAsBinary(RegisToBiShow(Regis2));
+                clock += 2;
+                inst += 1;
             }
             else if (method.Equals("swi"))
             {
@@ -268,6 +292,8 @@ namespace CPUSimulator
                 swi(NumRegis1, NumRegis2);
                 outputAsBinary(RegisToBiShow(Regis1));
                 outputAsBinary(RegisToBiShow(Regis2));
+                clock += 2;
+                inst += 1;
             }
             else
             {
@@ -286,6 +312,8 @@ namespace CPUSimulator
                 outputAsBinary("0000");
                 NumToBi(0);
                 del(NumRegis);
+                clock += 1;
+                inst += 1;
             }
             else
             {
@@ -304,7 +332,7 @@ namespace CPUSimulator
                 n = "0" + n;
             }
 
-            outAsBinaryNum = n;
+            outAsBinaryNum = n + "\n";
             
           
             
@@ -319,6 +347,9 @@ namespace CPUSimulator
         {
             outAsBinary = "";
             outAsBinaryNum = "";
+            clock = 0;
+            inst = 0;
+            //cpi.Text = "";
         }
         public void ResetReg()
         {
@@ -327,13 +358,14 @@ namespace CPUSimulator
                 reg[i] = 0;
             }
             OutBox1.Text = "";
+            cpi.Text = " ";
             RegUpdate();
         }
         public void result()
         {
             String StrOld = OutBox1.Text;
-            String StrNew = InBox1.Text + " :\n" + outAsBinary + " " + outAsBinaryNum;
-            OutBox1.Text = StrOld + "\n" + StrNew;
+            String StrNew = InBox1.Text + " :" + Environment.NewLine + outAsBinary + " " + outAsBinaryNum;
+            OutBox1.Text = "\n" + StrOld + "\n" + StrNew + Environment.NewLine;
 
         }
         public void RegUpdate()
@@ -346,6 +378,7 @@ namespace CPUSimulator
             Reigs6.Text = reg[6].ToString();
             Reigs7.Text = reg[7].ToString();
             Reigs8.Text = reg[8].ToString();
+            cpi.Text = (clock / inst).ToString();
         }
         public void move(int r1, int number)
         {
@@ -362,46 +395,53 @@ namespace CPUSimulator
         {
             //add a 5
             reg[r1] = reg[r1] + number;
+            NumToBi(reg[r1]);
         }
         public void addReg(int r1, int r2)
         {
             //add b a
             reg[r1] = reg[r1] + reg[r2];
+            NumToBi(reg[r1]);
         }
         //***************************
         public void sub(int r1, int number)
         {
             //sub a 5
             reg[r1] = reg[r1] - number;
+            NumToBi(reg[r1]);
         }
         public void subReg(int r1, int r2)
         {
             //sub b a
             reg[r1] = reg[r1] - reg[r2];
+            NumToBi(reg[r1]);
         }
         //***************************
         public void mul(int r1, int number)
         {
             //mul a 5
             reg[r1] = reg[r1] * number;
+            NumToBi(reg[r1]);
         }
         public void mulReg(int r1, int r2)
         {
             //mul b a
             reg[r1] = reg[r1] * reg[r2];
+            NumToBi(reg[r1]);
         }
-        //***************************
         public void div(int r1, int number)
         {
             //div a 2
 
             reg[r1] = reg[r1] / number;
+            NumToBi(reg[r1]);
         }
         public void divReg(int r1, int r2)
         {
             //div b a
 
             reg[r1] = reg[r1] / reg[r2];
+            NumToBi(reg[r1]);
         }
         //***************************
         public void copyReg(int r1, int r2)
@@ -409,6 +449,7 @@ namespace CPUSimulator
             //cop b a
             int tempReg = reg[r2];
             reg[r1] = tempReg;
+            NumToBi(reg[r1]);
         }
         //***************************
         public void swi(int r1, int r2)
